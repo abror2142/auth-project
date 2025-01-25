@@ -1,0 +1,139 @@
+{% extends './layouts/admin.html' %}
+
+{% block title %}Dashboard{% endblock %}
+ 
+{% block headExtra %}
+    {{ knp_pagination_rel_links(pagination) }}
+{% endblock %}
+
+{% block body %}
+<div class="h-screen flex items-center justify-center">
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg max-w-min bg-white p-[20px]">
+        <div class="bg-gray-200 py-3 px-3 flex gap-16 items-center rounded-md">
+            <div class="flex gap-3 items-center ">
+                <button
+                    id="blockBtn" 
+                    class="bg-gray-50 flex gap-2 items-center h-[37px] px-3 rounded-md font-medium text-gray-500 ">
+                    Block
+                    <i class="fa-solid fa-lock text-lg"></i>
+                </button>
+                <button 
+                    id="unblockBtn" 
+                    class="bg-gray-50 flex gap-2 items-center h-[37px] px-3 rounded-md font-medium">
+                    <i class="fa-solid fa-lock-open text-blue-500 text-lg"></i>
+                </button>
+                <button 
+                    id="deleteBtn" 
+                    class="bg-gray-50 flex gap-2 items-center h-[37px] px-3 rounded-md font-medium text-red-500">
+                    Delete
+                    <i class="fa-solid fa-trash text-red-500 text-lg"></i>
+                </button>
+            </div>
+            <div class="relative grow-1">
+                <div class="bg-gray-50 text-sm rounded-md 
+                        focus:ring-gray-300 focus:border-gray-500 
+                        flex items-center max-w-sm h-[40px] dark:bg-gray-700 
+                        dark:border-gray-600 dark:placeholder-gray-400 
+                        dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        class="text-gray-500 h-full outline-none pl-2 w-full" 
+                        placeholder="Search by email or name ..." />
+                    <i class="fa-solid fa-magnifying-glass text-gray-500 px-4"></i>
+
+                </div>
+                <div 
+                    id="resultsBox" 
+                    class="empty:hidden absolute max-h-[200px] mt-2 py-4 px-6 bg-white rounded-md flex flex-col gap-2 overflow-y-auto"
+                ></div>
+            </div>
+        </div>
+
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 px-6 ">
+            <thead class="text-xs text-gray-700 uppercase dark:bg-gray-700 dark:text-gray-400">
+                <tr class="text-center">
+                    <th scope="col" class="p-4">
+                        <div class="flex items-center">
+                            <input id="mainCheckBox" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="checkbox-all-search" class="sr-only">checkbox</label>
+                        </div>
+                    </th>
+                    <th scope="col" class="px-4 py-3">
+                        Name
+                    </th>
+                    <th scope="col" class="px-4 py-3">
+                        Email
+                    </th>
+                    <th scope="col" class="px-4 py-3">
+                        Blocked
+                    </th>
+                    <th scope="col" class="px-4 py-3">
+                        Last Login
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            <form method="POST" action="{{ path('dashboard_action') }}" id="userActionForm">
+            {% for user in pagination %}
+                {% if selected_user and user.id == selected_user %}
+                    <tr class="relative bg-gray-200 border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600">
+                {% else %}
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                {% endif %}
+                    <td class="w-4 p-4">
+                        <div class="flex items-center">
+                            <input 
+                                id="checkbox-table-search-1" 
+                                type="checkbox" 
+                                name="users[]"
+                                value="{{ user.id }}"
+                                class="checkboxItem w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
+                        </div>
+                    </td>
+                    <th scope="row" class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        {{ user.fullName }}
+                    </th>
+                    <td class="px-6 py-2 whitespace-nowrap">
+                        {{user.email}}
+                    </td>
+
+                    <td class="w-4 p-4 text-center">
+                        {% if user.isBlocked %}
+                            <i class="fa-solid fa-x"></i>
+                        {% else %}
+                            <i class="fa-solid fa-check"></i>
+                        {% endif %}
+                    </td>
+
+                    <td class="px-6 py-2 whitespace-nowrap text-center">
+                        <p title="{{ user.lastLogin|date('Y-m-d H:m:s')}}" data-tooltip-target="tooltip-animation">
+
+                        {% if user.lastLogin %}
+                            {{ user.lastLogin|relative_time }}
+
+                        {% else %}
+                            - 
+                        {% endif %}
+                        
+                        </p>
+                    </td>
+                    {% if selected_user and user.id == selected_user %}
+                        <td id="unpin-user" class="flex flex-col items-center justify-center px-2 py-1 absolute top-0 right-0">
+                            <i class="fa-solid fa-thumbtack-slash text-gray-700"></i> 
+                        </td>
+                    {% endif %}
+                </tr>
+
+            {% endfor %}
+            </form>
+            </tbody>
+        </table>
+
+        <div class="navigation">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
