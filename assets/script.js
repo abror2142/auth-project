@@ -1,3 +1,11 @@
+
+let closingBtn = document.getElementById('closingBtn')
+    if(closingBtn) {
+        closingBtn.addEventListener('click', (e) => {
+        document.getElementById('alert-box').classList.add('invisible');
+    })
+}
+
 /* #########################
     Searchbar XML Request
 ######################### */
@@ -53,14 +61,8 @@ function searchUsers(searchTerm) {
                     if(params.has('user'))
                         url = url.replace(/(user=)[^\&]+/, '$1' + user.id);
                     else {
-                        const params = new URLSearchParams();
-                        params.append('user', user.id);
-                        const queryString = params.toString();
-
-                        if(params.size > 1)
-                            url = `${url}&${queryString}`;
-                        else 
-                            url = `${url}?${queryString}`;
+                        const separator = url.includes('?') ? '&' : '?';
+                        url = `${url}${separator}user=${user.id}`;
                     }
                     userLink.innerHTML = `
                         <div class="flex gap-2 items-center">

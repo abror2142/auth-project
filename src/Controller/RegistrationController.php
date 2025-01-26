@@ -50,7 +50,8 @@ class RegistrationController extends AbstractController
                 $this->formLoginAuthenticator,
                 $request
             );
-            return $this->redirectToRoute('app_dashboard');
+            $this->addFlash('success', "You are successfully signed in!");
+            return $this->redirectToRoute('app_dashboard', );
         }
 
         return $this->render('registration/register.html.twig', [

@@ -20,6 +20,13 @@
         <div class="mt-5 text-center text-lg">
             You are logged in as {{ app.user.userIdentifier }} <a href="{{ path('app_logout') }}" class="text-blue-600 hover:underline">Logout</a>
         </div>
+         {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
     {% else %}  
 
         <div class="mt-4">
@@ -29,13 +36,7 @@
                 </div>
             {% endif %}
 
-            {% for label, messages in app.flashes %}
-                {% for message in messages %}
-                    <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endfor %}
+           
 
           
         </div>

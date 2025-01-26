@@ -5,6 +5,7 @@ namespace App\EventListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 
 final class LoginListener
@@ -27,5 +28,14 @@ final class LoginListener
             $this->entityManager->persist($user);
             $this->entityManager->flush();
         }
+
+        $request = $event->getRequest();
+
+        // If the user is already logged in (by checking session or cookie)
+        if ($request->getSession()) {
+            // Add a flash message
+            $request->getSession()->getFlashBag()->add('success', 'You are successfully logged in.');
+        }
+        // $event->setResponse(new RedirectResponse($this->router->generate('dashboard')));
     }
 }
