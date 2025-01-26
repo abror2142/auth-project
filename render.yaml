@@ -1,0 +1,63 @@
+services:
+  - type: web
+    name: php-app
+    env: docker
+    dockerfilePath: ./Dockerfile
+    buildCommand: ""  # Optional: if no specific build command is required
+    startCommand: php-fpm
+    envVars:
+      - key: PHP_IDE_CONFIG
+        value: "serverName=shop"
+      - key: DATABASE_URL
+        value: ${DATABASE_URL}
+      - key: MESSENGER_TRANSPORT_DSN
+        value: ${MESSENGER_TRANSPORT_DSN}
+      - key: MAILER_DSN
+        value: ${MAILER_DSN}
+      - key: APP_ENV
+        value: ${APP_ENV}
+      - key: APP_SECRET
+        value: ${APP_SECRET}
+    mounts:
+      - type: volume
+        name: app-data
+        path: /app
+    dependsOn:
+      - db
+
+  - type: web
+    name: nginx
+    env: docker
+    image: nginx:latest
+    startCommand: ""  # Nginx uses its default entrypoint
+    envVars: []
+    ports:
+      - 80
+    mounts:
+      - type: volume
+        name: nginx-config
+        path: /etc/nginx/conf.d
+      - type: volume
+        name: app-data
+        path: /app
+    dependsOn:
+      - php-app
+
+  - type: database
+    name: db
+    database: postgres
+    plan: starter  # Adjust the plan as needed
+    version: 15  # Specify the Postgres version
+    defaultDatabaseName: ${POSTGRES_DB}
+    user: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    healthCheckPath: /db
+    mounts:
+      - type: volume
+        name: db-data
+        path: /var/lib/postgresql/data
+
+volumes:
+  - name: app-data
+  - name: nginx-config
+  - name: db-data

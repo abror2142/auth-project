@@ -21,8 +21,6 @@ services:
     build: ./
     environment:
       PHP_IDE_CONFIG: "serverName=shop"
-    volumes:
-      - ./:/app
     env_file:
       - path: ./.env
         required: true
