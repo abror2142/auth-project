@@ -35,7 +35,7 @@ final class DashboardController extends AbstractController
         $pagination = $paginator->paginate(
             $users,
             $request->query->getInt('page', 1),
-            4
+            6
         );
         
         return $this->render('dashboard/index.html.twig', [
