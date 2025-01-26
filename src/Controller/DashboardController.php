@@ -50,6 +50,9 @@ final class DashboardController extends AbstractController
         $data = $request->request->all();
         $action = $data['action'];
         $userIds = $data['users'];
+        if(!$userIds) {
+            return $this->redirectToRoute('app_dashboard');
+        }
 
         if ($action == 'block') {
             foreach ($userIds as $userId) {
@@ -74,7 +77,7 @@ final class DashboardController extends AbstractController
             }
             $entityManager->flush();
         };
-        return $this->redirectToRoute('app_dashboard');
+        return $this->redirectToRoute('app_register');
     }
 
     #[Route('/search/users', name: 'app_search', methods: ['POST'])]
