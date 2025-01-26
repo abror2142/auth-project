@@ -1,36 +1,19 @@
-FROM ghcr.io/eventpoints/php:main AS php
+FROM php:8.3-fpm
 
-ENV APP_ENV="prod" \
-    APP_DEBUG=0 \
-    PHP_OPCACHE_PRELOAD="/app/config/preload.php" \
-    PHP_EXPOSE_PHP="off" \
-    PHP_OPCACHE_VALIDATE_TIMESTAMPS=0
+# Set working directory
+WORKDIR /app
 
-RUN rm -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+COPY . .
 
-RUN mkdir -p var/cache var/log
+RUN apt-get update && apt-get -y install git zip libpq-dev && \
+    docker-php-ext-install pdo pdo_pgsql pgsql && \
+    rm -rf /var/lib/apt/lists/*
 
-# Intentionally split into multiple steps to leverage docker layer caching
-COPY composer.json composer.lock symfony.lock ./
+RUN curl -sL https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
 
-RUN composer install --no-dev --prefer-dist --no-interaction --no-scripts
+COPY ./entrypoint.sh /
 
-# Install npm packages
-COPY package.json package-lock.json webpack.config.js ./
-RUN npm install
+ENTRYPOINT ["sh", "/entrypoint.sh"]
 
-# Production yarn build
-COPY assets ./assets
-
-RUN npm run build
-
-COPY temp .
-
-# Need to run again to trigger scripts with application code present
-RUN composer install --no-dev --no-interaction --classmap-authoritative
-RUN composer symfony:dump-env prod
-RUN chmod -R 777 var
-
-FROM ghcr.io/eventpoints/caddy:main AS caddy
-
-COPY --from=php /app/public public/
+# Default command
+CMD ["php-fpm"]

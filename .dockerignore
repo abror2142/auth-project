@@ -1,0 +1,9 @@
+vendor/
+var/
+Dockerfile
+
+.env.dev
+.env.test
+.gitignore
+node_modules/
+
