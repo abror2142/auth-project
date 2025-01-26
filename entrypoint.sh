@@ -12,7 +12,15 @@ if [ "$WAIT_FOR_DB" = "true" ]; then
   echo "Database is ready!"
 fi
 
+# Run Composer install if the vendor folder is missing
+if [ ! -d "vendor" ]; then
+    composer install
+fi
+
+
 php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+
+
 
 echo "Initialization complete. Starting php-fpm..."
 
