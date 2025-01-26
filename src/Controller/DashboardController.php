@@ -50,6 +50,11 @@ final class DashboardController extends AbstractController
         $data = $request->request->all();
         $action = $data['action'];
         $userIds = $data['users'];
+        $user = $request->getUser();
+        $return_url = "app_dashboard";
+
+        
+
         if(!$userIds) {
             return $this->redirectToRoute('app_dashboard');
         }
@@ -72,12 +77,16 @@ final class DashboardController extends AbstractController
             $entityManager->flush();
         }else if($action == 'delete') {
             foreach ($userIds as $userId) {
-                $user = $entityManager->getRepository(User::class)->find($userId);
-                $entityManager->remove($user);
+                $user_temp = $entityManager->getRepository(User::class)->find($userId);
+                $entityManager->remove($user_temp);
+
+                if($this->getUser()->getUserIdentifier() === $userId ){
+                    $return_url = "app_register";
+                }
             }
             $entityManager->flush();
         };
-        return $this->redirectToRoute('app_register');
+        return $this->redirectToRoute($return_url);
     }
 
     #[Route('/search/users', name: 'app_search', methods: ['POST'])]
