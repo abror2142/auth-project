@@ -19,10 +19,8 @@ final class DashboardController extends AbstractController
     public function index(UserRepository $userRepository, PaginatorInterface $paginator, Request $request): Response
     {       
         $user_param = $request->query->get('user');
-        
-        $criteria = Criteria::create()->orderBy(['lastLogin' => Criteria::DESC]);
 
-        $users = $userRepository->matching($criteria);
+        $users = $userRepository->findAllOrderedByLastLoginDesc();
 
         if($user_param != null) {
             $priorityUser = $userRepository->find($user_param);
