@@ -47,7 +47,7 @@ function searchUsers(searchTerm) {
             // Populate the results
             if (users.length > 0) {
                 users.forEach(user => {
-                    const userLink = document.createElement('a');
+                    const userLink = document.createElement('div');
                     let url = window.location.href;
                     const params = new URL(url).searchParams;
                     if(params.has('user'))
@@ -64,15 +64,21 @@ function searchUsers(searchTerm) {
                     }
                     userLink.innerHTML = `
                         <div class="flex gap-2 items-center">
-                            <i class="fa-solid fa-user"></i>
+                            <i class="fa-solid fa-user text-gray-600"></i>
                             ${user.fullname}
                         </div> 
                         <div class="flex gap-2 items-center">
-                            <i class="fa-solid fa-envelope"></i>
+                            <i class="fa-solid fa-envelope text-gray-600"></i>
                             ${user.email}
                         </div>`;
-                    userLink.className = 'text-sm py-1.5 px-3 bg-gray-200 rounded-md';
-                    userLink.href = url;
+                    userLink.className = "text-sm py-1.5 px-3 bg-amber-300 rounded-md user-link hover:bg-amber-400";
+                    
+                    // There was a bug with href attr (js not working)
+                    // Solved wiht onclick event :)
+                    userLink.onclick = function (e) {
+                        e.preventDefault()
+                        window.location.href = url;
+                    }
                     resultsBox.appendChild(userLink);
                 });
             } else {
@@ -87,7 +93,6 @@ function searchUsers(searchTerm) {
         console.error('Request failed');
     };
 
-    // Prepare the XML payload
     const xmlPayload = `
         <search>
             <term>${searchTerm}</term>
@@ -105,6 +110,7 @@ document.getElementById('searchInput').addEventListener('input', function (e) {
     } else {
         document.getElementById('resultsBox').innerHTML = '';
     }
+ 
 });
 
 /* ########################
@@ -156,4 +162,28 @@ document.getElementById("deleteBtn").addEventListener('click', function () {
     
     form.appendChild(hiddenInput);
     form.submit();
+});
+
+// WARNING !!! Temporary solution
+/* ###########################
+    FIXING BUG WITH 'a'
+############################ */
+/*
+    The problem is when a is clicked and go to the
+    specified url, javascript is not working. No actions
+    are performed on the new page. Somehow, using window.location
+    solves. Temporary! Need to be learned ASAP.
+*/
+document.addEventListener('DOMContentLoaded', () => {
+    // Get all <a> elements in the DOM
+    const links = document.querySelectorAll('a');
+
+    // Loop through each <a> element
+    links.forEach((link) => {
+        // Assign a function to the click event
+        link.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent the default navigation
+            window.location.href = link.href;
+        });
+    });
 });

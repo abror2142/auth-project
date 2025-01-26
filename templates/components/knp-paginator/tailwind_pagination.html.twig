@@ -5,31 +5,30 @@
         <div class="flex justify-between items-center flex-row w-auto">
             <div class="w-[120px] flex items-center justify-start">
                 {% if previous is defined %}
-                    <span class="w-[35px] h-[35px] border border-gray-400 rounded-md flex items-center justify-center text-gray-600 text-lg">
-                        <a rel="prev" href="{{ path(route, knp_pagination_query(query, previous)) }}">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </a>
-                    </span>
+                    <a rel="prev" href="{{ path(route, knp_pagination_query(query, previous)) }}"
+                        class="w-[35px] h-[35px] border border-gray-400 rounded-md flex items-center justify-center text-gray-600 text-lg">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </a>
                 {% endif %}
             </div>
             <div class="flex gap-2">
                 {% for page in pagesInRange %}
                     {% if page != current %}
-                        <span class="h-[35px] w-[35px] flex items-center justify-center px-3 border border-gray-400 rounded-md">
-                            <a href="{{ path(route, knp_pagination_query(query, page)) }}">{{ page }}</a>
-                        </span>
+                        <a href="{{ path(route, knp_pagination_query(query, page)) }}" 
+                            class="h-[35px] w-[35px] flex items-center justify-center px-3 border border-gray-400 rounded-md">
+                            {{ page }}
+                        </a>
                     {% else %}
-                        <span class="h-[35px] w-[35px] flex items-center justify-center px-3 border border-gray-400 rounded-md bg-green-400 text-lg">{{ page }}</span>
+                        <span class="h-[35px] w-[35px] flex items-center justify-center px-3 border border-gray-400 rounded-md bg-amber-400 text-lg">{{ page }}</span>
                     {% endif %}
                 {% endfor %}
             </div>
             <div class="w-[120px] flex items-center justify-end">
                 {% if next is defined %}
-                    <span class="w-[35px] h-[35px] border border-gray-400 rounded-md flex items-center justify-center text-gray-600 text-lg">
-                        <a rel="next" href="{{ path(route, knp_pagination_query(query, next)) }}">
+                    <a rel="next" href="{{ path(route, knp_pagination_query(query, next)) }}" 
+                        class="w-[35px] h-[35px] border border-gray-400 rounded-md flex items-center justify-center text-gray-600 text-lg">
                         <i class="fa-solid fa-chevron-right"></i>
-                        </a>
-                    </span>
+                    </a>
                 {% endif %}
             </div>
         </div>
