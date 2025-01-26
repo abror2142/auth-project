@@ -11,6 +11,8 @@ RUN apt-get update && apt-get -y install git zip libpq-dev && \
 
 RUN curl -sL https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
 
+RUN composer install
+
 COPY ./entrypoint.sh /
 
 ENTRYPOINT ["sh", "/entrypoint.sh"]
