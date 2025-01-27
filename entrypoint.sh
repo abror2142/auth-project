@@ -20,8 +20,10 @@ fi
 
 php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
 
-
-
 echo "Initialization complete. Starting php-fpm..."
+
+echo "Running chown..."
+chown -R www-data:www-data /var
+echo "Chown completed..."
 
 exec "$@"
